@@ -1,0 +1,65 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+
+\usepackage{amsmath}
+\usepackage{siunitx}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{textcomp}
+\usepackage{graphicx}
+\usepackage{xr}
+%\usepackage{hyperref}
+
+\externaldocument{hw1_code}
+
+\definecolor{matlabgreen}{RGB}{28,172,0}
+\definecolor{matlablilas}{RGB}{170,55,241}
+
+\newcommand{\includecode}[1]{
+  \lstinputlisting[caption={\ttfamily #1.m}, label={lst:#1}]{matlab/#1.m}
+}
+\newcommand{\inlinecode}[1]{
+  \lstinline[basicstyle=\ttfamily,keywordstyle={}]{#1}
+}
+
+\renewcommand{\vec}[1]{
+  \underline{#1}
+}
+
+\newcommand{\E}[1]{
+  \operatorname{E}\left[ #1 \right]
+}
+
+\newcommand{\norm}[1]{
+  \left \lVert #1 \right \rVert
+}
+
+\newcommand{\abs}[1]{
+  \left| #1 \right|
+}
+
+\author{Enrico Polo \and Riccardo Zanol}
+\title{Homework 2}
+
+\begin{document}
+\lstset{
+  language=Matlab,
+  basicstyle={\ttfamily \footnotesize},
+  breaklines=true,
+  morekeywords={true,false,warning,xlim,ylim},
+  keywordstyle=\color{blue},
+  stringstyle=\color{matlablilas},
+  commentstyle={\color{matlabgreen} \itshape},
+  numberstyle={\ttfamily \tiny},
+  frame=leftline,
+  showstringspaces=false,
+  numbers=left,
+  upquote=true,
+}
+\maketitle
+\section*{Problem 1}
+\section*{Problem 2}
+\section*{Problem 3}
+\end{document}
