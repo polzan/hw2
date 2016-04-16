@@ -22,7 +22,8 @@
 \newcommand{\inlinecode}[1]{\lstinline[basicstyle=\ttfamily,keywordstyle={},stringstyle={},commentstyle={\itshape}]{#1}}
 
 \renewcommand{\vec}[1]{\underline{#1}}
-\newcommand{\E}[1]{\operatorname{E}\left[ #1 \right]}
+\renewcommand{\Re}[1]{\operatorname{Re}\left[#1\right]}
+\newcommand{\E}[1]{\operatorname{E}\left[#1\right]}
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 \newcommand{\abs}[1]{\left|#1\right|}
 
@@ -47,5 +48,57 @@
 \maketitle
 \section*{Problem 1}
 \section*{Problem 2}
+To prove equation (3.272) we start from equation (3.70) and assume that:
+\begin{itemize}
+\item $\vec{\Delta c}(k)$ and $\vec{x}(k)$ are independent, 
+\item $e_{min}(k)$ and $\vec{x}(k)$ are orthogonal, 
+\item $\vec{x}^T(k)\vec{x}^*(k) \approx Nr_x(0)$.
+\end{itemize}
+In the LMS algorithm the error on the coefficient vector changes at each iteration in this way (3.70):
+\begin{equation*}
+  \vec{\Delta c}(k+1) = \left( I - \mu\vec{x}^*(k)\vec{x}^T(k) \right) \vec{\Delta c}(k) + \mu e_{min}(k)\vec{x}^*(k) , 
+\end{equation*}
+and, if we take the expectation of the squared norm of both terms, we get
+\begin{align}
+  \E{\norm{\vec{\Delta c}(k+1)}^2} % &=  \E{\norm{\left( I - \mu\vec{x}^*(k)\vec{x}^T(k) \right) \vec{\Delta c}(k) + \mu e_{min}(k)\vec{x}^*(k)}^2} \\
+  &= \E{\norm{\left( I - \mu\vec{x}^*(k)\vec{x}^T(k) \right) \vec{\Delta c}(k)}^2}
+  \label{eq:exp_1} \\
+  & \quad + \E{\norm{\mu e_{min}(k)\vec{x}^*(k)}^2}
+  \label{eq:exp_2} \\
+  & \quad + \E{\left(\left( I - \mu\vec{x}^*(k)\vec{x}^T(k) \right)\vec{\Delta c}(k)\right)^T\left(\mu e_{min}(k)\vec{x}^*(k)\right)^*}
+  \label{eq:exp_3} \\
+  & \quad + \E{\left(\mu e_{min}(k)\vec{x}^*(k)\right)^T\left(\left( I - \mu\vec{x}^*(k) \vec{x}^T(k)\right) \vec{\Delta c}(k)\right)^*}
+  \label{eq:exp_4} .
+\end{align}
+
+If we write the norm term by term the first expectation
+(\ref{eq:exp_1}) becomes
+\[ \E{\sum_{i=0}^{N-1}\abs{1 - \mu\abs{x(k-i)}^2}^2\abs{\Delta c_i(k)}^2} \]
+then we compute the product between the two squared absolute values,
+we bring the expectaion inside the finite sum and we exploit the
+independece between $x(k-i)$ and $\Delta c_i(k)$ to factor the
+expectations so the first term becomes:
+\[ \E{\norm{\vec{\Delta c}(k)}^2} +
+\mu^2\sum_{i=0}^{N-1}\E{\abs{x(k-i)}^4}\E{\abs{\Delta c_i(k)}^2} - 2\mu
+r_x(0)\E{\norm{\vec{\Delta c}(k)}^2}
+\]
+where we also exploited the WSS of $x(k)$ to write $\E{\abs{x(k-i)}^2}
+= r_x(0)$. {\color{red} e adesso? supponiamo l'input bianco? supponiamo qualche forma per il 4o momento?}
+
+If we use the approximation $\norm{\vec{x}(k)}^2 \approx Nr_x(0)$ in
+the second expectation (\ref{eq:exp_2}), it becomes
+\[
+\mu^2 \E{\abs{e_{min}(k)}^2 \norm{\vec{x}^*(k)}^2}
+= \mu^2Nr_x(0)\E{\abs{e_{min}(k)}^2}
+= \mu^2Nr_x(0)J_{min} .
+\]
+
+The last two expectations (\ref{eq:exp_3}) and (\ref{eq:exp_4}) can be
+rewritten as, respectively,
+\begin{align*}
+  & \E{\left(\mu - \mu^2\norm{\vec{x}(k)}^2\right) e_{min}^*(k) \vec{\Delta c}^T(k)\vec{x}(k)} \\
+  & \E{\left(\mu - \mu^2\norm{\vec{x}(k)}^2\right) e_{min}(k) \vec{\Delta c}^T(k)\vec{x}(k)}
+\end{align*}
+{\color{red} anche qua non saprei più come fare}
 \section*{Problem 3}
 \end{document}
