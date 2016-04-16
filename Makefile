@@ -1,6 +1,6 @@
-all: hw1.pdf hw1_code.pdf
+all: hw2.pdf hw2_code.pdf
 
-hw1.pdf: hw1_code.pdf
+hw2.pdf: hw2_code.pdf
 
 %.pdf: %.tex clean
 	pdflatex $<
@@ -10,5 +10,6 @@ clean:
 	rm *.pdf || true
 	rm *.aux || true
 	rm *.out || true
+	rm matlab/*.pdf || true
 
 .PHONY: clean all
