@@ -1,7 +1,7 @@
 close all; clear all; clc;
 
-T = 1;
-tau_rms = 0.2*T;
+T = 1/10000;
+tau_rms = 0.2*T; % 20 us
 N_h = 5;
 Tc = T/4;
 
@@ -11,7 +11,7 @@ pdp = exp(-tau/tau_rms)./tau_rms;
 norm_pdp = pdp ./ sum(pdp);
 
 rice_factor = 10^(2 / 10); % 2dB
-C = sqrt(rice_factor/(rice_factor+1));
+C = sqrt(rice_factor/(rice_factor+1)); % Assuming normalized pdp
 
 % Plot of the PDP(0..4)
 figure;
