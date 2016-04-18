@@ -49,7 +49,86 @@
 \maketitle
 \section*{Problem 1}
 \section*{Problem 2}
-To prove equation (3.272) we start from equation (3.70) and assume that:
+To prove equation (3.271) of the textbook we start from the definition
+of $J(k) = \E{\abs{e(k)}^2}$ and substitute
+\[ e(k) = d(k) - y(k) = \left(\vec{h}^T - \vec{c}^T(k) \right) \vec{x}(k) + w(k) \]
+inside the expectation. So the mean squared error becomes
+\begin{equation}
+  J(k) = \E{\abs{\left(\vec{h}^T - \vec{c}^T(k) \right) \vec{x}(k)}^2}
+  + \E{\abs{w(k)}^2}
+  + \E{2\Re{\left(\vec{h}^T - \vec{c}^T(k) \right) \vec{x}(k) w^*(k)}}
+  \label{eq:J}
+\end{equation}
+{\color{red} where the last term is zero because ...}.
+
+The second term of equation (\ref{eq:J}) is just $\sigma^2_w$, while
+the first expectation can be written as
+\[ \E{
+  \left(\sum_{i=0}^{N_{max}}\left(h_i - c_i\right)x(k-i)\right)
+  \left(\sum_{j=0}^{N_{max}}\left(h_j - c_j\right)x(k-j)\right)^* } \]
+where $N_{max} = \max\{N, N_h\}$ and we assume that all the vectors
+are padded with zeros to length $N_{max}$.  If we rearrange the sums
+and the expectation then, {\color{red} if we assume that the pairs
+  $(c_i,c_j)$ and $(x(k-i),x(k-j))$ are statistically independent
+  $\forall i,j$}, we can factor the expectation:
+\begin{equation}
+%%   &\sum_{i=0}^{N_{max}}\sum_{j=0}^{N_{max}}
+%% \E{(h_i -c_i)(h_j-c_j)^*x(k-i)x^*(k-j)} \\
+\sum_{i=0}^{N_{max}}\sum_{j=0}^{N_{max}}
+\E{(h_i -c_i)(h_j-c_j)^*}
+\E{x(k-i)x^*(k-j)} .
+\label{eq:J_sums}
+\end{equation}
+Now if the input $x(k)$ is white its autocorrelation is
+\[
+\E{x(k-i)x^*(k-j)} = r_x(j-i) = r_x(0)\delta(j-i)
+\]
+so the only non-zero terms of equation (\ref{eq:J_sums}) are those
+with $i=j$ and it becomes:
+\begin{equation}
+  r_x(0)\E{\norm{\vec{h}-\vec{c}(k)}^2}
+  \label{eq:J_final_diff}
+\end{equation}
+
+Depending on the order of the channel and the filter there are two cases:
+\begin{enumerate}
+\item If $N \geq N_h$ the optimal value of $\vec{c}(k)$ is
+  $\vec{c}_{opt} = \vec{h}$, so the difference in equation
+  (\ref{eq:J_final_diff}) can be written as $\vec{h}-\vec{c}(k) =
+  -\left(\vec{c}(k)-\vec{c}_{opt}\right) = -\vec{\Delta c}(k)$ and the
+  MSE is:
+  \begin{equation}
+    J(k) = \sigma^2_w + r_x(0)\E{\norm{\vec{\Delta c}(k)}^2}
+    = J_{min} + r_x(0)\E{\norm{\vec{\Delta c}(k)}^2}.
+  \end{equation}
+  \item If $N < N_h$ the filter can only model the first $N$
+    coefficients of the channel and the optimal solution is
+    $\vec{c}_{opt} = [h_0,h_1,\dots h_{N-1},0,\dots 0]^T$. If we write
+    the difference of equation (\ref{eq:J_final_diff}) using the
+    residual error vector $ \vec{\Delta h}(\infty) =
+    [0,\dots0,-h_{N},-h_{N+1},\dots-h_{N_h-1}]^T $ we get
+    $\vec{h}-\vec{c}(k) = -\vec{\Delta c}(k) -\vec{\Delta h}(\infty)$.
+    Computing the expectation of equation (\ref{eq:J_final_diff}) by
+    writing the norm term by term and bringing out the sum we get
+    \[
+    \sum_{i=0}^{N_h}\E{
+      \abs{\Delta h_i(\infty)}^2
+      + \abs{\Delta c_i(k)}^2
+      + 2\Re{\Delta h_i(\infty) \Delta c_i^*(k)}
+    }
+    \]
+    where we notice that, in the last term, one of either $\Delta
+    h_i(\infty)$ or $\Delta c_i(k)$ must be zero, so what is left is
+    $\norm{\vec{\Delta h}(\infty)}^2 + \E{\norm{\vec{\Delta c}(k)}^2}$
+    and, putting everything together, we get the MSE as
+    \begin{equation}
+      J(k) = \sigma^2_w + r_x(0)\norm{\vec{\Delta h}(\infty)}^2 + r_x(0)\E{\norm{\vec{\Delta c}(k)}^2}
+      = J_{min} + r_x(0)\E{\norm{\vec{\Delta c}(k)}^2} .
+    \end{equation}
+\end{enumerate}
+
+To prove equation (3.272) we start from equation (3.70) and assume
+that:
 \begin{itemize}
 \item $\vec{\Delta c}(k)$ and $\vec{x}(k)$ are independent, 
 \item $e_{min}(k)$ and $\vec{x}(k)$ are orthogonal, 
