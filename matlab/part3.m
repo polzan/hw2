@@ -1,7 +1,7 @@
 close all; clear all; clc;
 
-T = 1/10000;
-tau_rms = 0.2*T; % 20 us
+T = 1; % Symbol period?
+tau_rms = 0.2*T;
 N_h = 5;
 Tc = T/4;
 
@@ -27,7 +27,7 @@ end
 
 fdTc = 25e-5;
 K = 12000;
-g = generate_ch_coeff(Tc, fdTc/Tc, norm_pdp, C, N_h, K);
+g = generate_ch_response(Tc, fdTc/Tc, norm_pdp, C, N_h, K);
 
 % Plot the channel h
 figure;
