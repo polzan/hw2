@@ -1,4 +1,4 @@
-function g = generate_ch_response(Tq, fd, pdp, C, N_ch, K)
+function g = generate_ch_response(Tq, fd, pdp, C, N_ch, K, seed)
 if fd == 0
     g_t = sqrt(pdp) .* (randn(N_ch, 1) + 1j*randn(N_ch, 1));
     g = repmat(g_t, 1, K);
@@ -11,7 +11,7 @@ elseif fd > 0
     interp_length = 2*4*M + 1; % Tq
     
     Kp = ceil(K/M) + dopp_length + ceil(interp_length/M); % Num of samples to simulate
-    g_dopp = filter_from_white(Hb, Ha, N_ch, Kp);
+    g_dopp = filter_from_white(Hb, Ha, N_ch, Kp, seed);
     g_dopp = g_dopp(:, dopp_length:Kp); % Drop the transient of h_ds
     
     % Interpolate

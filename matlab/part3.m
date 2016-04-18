@@ -27,7 +27,7 @@ end
 
 fdTc = 25e-5;
 K = 80000;
-g = generate_ch_response(Tc, fdTc/Tc, norm_pdp, C, N_h, K);
+h = generate_ch_response(Tc, fdTc/Tc, norm_pdp, C, N_h, K, 'shuffle');
 
 % Plot the channel h
 Kplot = 12000;
