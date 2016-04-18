@@ -1,6 +1,6 @@
-function psd = psd_welch_estim(x, w, D, S, f, Fs)
+function psd = psd_welch_estim(x, w, D, S, Ndft)
 K = length(x);
-Ndft = length(f);
+%Ndft = length(f);
 Mw = 1/D * (w'*w);
 N_s = floor((K - D) / (D - S) + 1);
 psd_chunk = zeros(Ndft, N_s);
