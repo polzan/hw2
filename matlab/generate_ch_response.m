@@ -5,7 +5,7 @@ if fd == 0
 elseif fd > 0
     M = round(0.1 / (fd*Tq)); % Interpolation factor to get the desired fd
     %Tp = M*Tq;
-    [Hb, Ha] = classical_doppler_spectrum(); % This assumes fd*Tp = 0.1
+    [Hb, Ha] = classical_doppler_filter(); % This assumes fd*Tp = 0.1
     
     dopp_length = 250; %Tp
     interp_length = 2*4*M + 1; % Tq
