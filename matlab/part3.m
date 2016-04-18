@@ -41,3 +41,41 @@ ylabel('|h_2(k)|');
 subplot(1,3,3);
 plot(0:Kplot-1, abs(h(5,1:Kplot)));
 ylabel('|h_4(k)|');
+
+% PSD 
+Kf = 80000; % We need the resolution to see D
+fd = fdTc / Tc;
+f = linspace(0, 1/Tc, Kf);
+D = classical_doppler_spectrum(f, fd);
+D = D ./ sum(D); % Must integrate to 1
+theor_spec = D .* norm_pdp(1);
+theor_spec(1) = theor_spec(1) + C^2*Kf;
+
+welch_D = 5000;
+welch_S = 125;
+welch = psd_welch_estim(transpose(h(1,:)), rectwin(welch_D), welch_D, welch_S, Kf);
+
+figure;
+hold all;
+
+% Draw the vertical line at fd
+theor_spec_db = 10*log10(theor_spec);
+i_inf = find(theor_spec_db == -Inf);
+theor_spec_db(i_inf) = -1000;
+
+plot(f, 10*log10(welch));
+plot(f, theor_spec_db);
+xlabel('lambda');
+ylabel('dB');
+legend('Welch', 'Theoretical');
+ylim([-40, 10]);
+
+figure;
+hold all;
+plot(f, 10*log10(welch));
+plot(f, theor_spec_db);
+xlabel('lambda');
+ylabel('dB');
+legend('Welch', 'Theoretical');
+xlim([0, 3*fd]);
+ylim([-20, 30]);
