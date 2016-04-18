@@ -26,17 +26,18 @@ for i=0:4
 end
 
 fdTc = 25e-5;
-K = 12000;
+K = 80000;
 g = generate_ch_response(Tc, fdTc/Tc, norm_pdp, C, N_h, K);
 
 % Plot the channel h
+Kplot = 12000;
 figure;
 subplot(1,3,1);
-plot(0:K-1, abs(g(1,:)));
+plot(0:Kplot-1, abs(h(1,1:Kplot)));
 ylabel('|h_0(k)|');
 subplot(1,3,2);
-plot(0:K-1, abs(g(3,:)));
+plot(0:Kplot-1, abs(h(3,1:Kplot)));
 ylabel('|h_2(k)|');
 subplot(1,3,3);
-plot(0:K-1, abs(g(5,:)));
+plot(0:Kplot-1, abs(h(5,1:Kplot)));
 ylabel('|h_4(k)|');
