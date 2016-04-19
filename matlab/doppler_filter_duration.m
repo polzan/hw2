@@ -1,6 +1,6 @@
 close all; clear all; clc;
 
-[b, a] = classical_doppler_spectrum();
+[b, a] = classical_doppler_filter();
 
 %l = impzlength(b,a);
 l = 250;
