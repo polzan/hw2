@@ -48,6 +48,43 @@
 }
 \maketitle
 \section*{Problem 1}
+To estimate the filter impulse response $\vec{h}^T = [h(0), ..., h(N-1)]$ by using a FIR filter of order $N_{fil}$ we use a PN sequence $\vec{p}^T = [p(0),...p(L-1)]$ (taking values in the set \{-1;1\}) periodic of period $L\geq N$ with $N=15$ that is the upper bound of the order of $h$. To take into account the transient of the filter in analysis we partially repeat the input sequence adding N-1 samples, putting as input a sequence $\vec{x}^T = [p(0), p(1),...,p(L-1),p(0),...,p(N-2))]$. So we get that the output of the unknown system (including the noise) is given by 
+\begin{align*}
+d(k)& = \vec{h}^T \vec{x} + w(k)&  k& = N-1,N-2...,N-1+L-1
+\end{align*}
+????????At the receiver side we consider $d(k)$ as the desired process we want to trace using our FIR filter, using $\vec{p}$ as input. In this way we can find that setting properly $N_{fil}$ and $L$ $\vec{c}_{opt} = \vec{h}$ in the ideal case (same realisation of the white input at the sender and at the receiver) and approximates it using a PN sequence. ??????????
+\newline Applying the correlation method we can find an estimate of the filter coefficients by using the relation 
+\begin{align*}
+\hat{r_{dx}}(n) &= \frac{1}{L} \sum_{k=N-1}^{(N-1) + (L-1)} {d(k)p^*(k-n)} & n&=0,1,...N_{fil} -1
+\end{align*}
+in which $d(k)$ is a received sequence of length L and $p(k)$ is the input PN sequence of length L, known by the receiver. ????????If we try an $N_{fil} \geq N$ the index of $p(k-n)$ must be negative in the computation of the sum but we can already compute that by using the property that for periodicity $p(-i) = p(L-i)$?????????????. The error commited in this case is given by ???????$d-\hat{d} or R^{-1}..$??????
+
+Using instead the LS method we compute the autocorrelation matrix of the PN sequence $\phi$ whose elements are 
+\begin{align*}
+\phi(i,n) &= \sum_{k=N-1}^{(N-1) + (L-1)}{p(k-i)p^*(k-n)}&
+i,n&=0,1,...N_{fil} -1
+\end{align*}
+and the cross correlation vector between $\vec{d}$ and $\vec{p}$, $\vec{\theta}^T = [\theta(0), \theta(1),..., \theta(N_{fil}-1)]$ whose elements are
+\begin{align*}
+\theta(n)& = \sum_{k=N-1}^{(N-1) + (L-1)}{d(k)p^*(k-n)}& n=0,1...,N_{fil}-1
+\end{align*}
+Then we find te optimal solution for the LS problem that give us  $\vec{\hat{h_{ls}}} = \vec{\phi}^{-1} \vec{\theta}$ with the correspondent error 
+$ e_{min} = e_d - \vec{\theta}^H \vec{\hat{h}}_{ls}$ ($e_d$ energy of the desired signal $d(k)$). Using this, we can finally estimate the power of the noise that affects $d(k)$ by $\hat{\sigma_\omega^2} = \frac{e_{min}}{L}$.
+\newline In our tries we tried to find the optimal values $N_{fil}$ and $L$. We started from $L = 15$ increasing it until the error $e$ didn't increase any longer. With both methods we find that from L=63 or L=127, it depends on the specific realization of w(k), and $N_{fil}$ fixed, we get the same results in therms of $\hat{\sigma_\omega^2} = e/L\simeq -5 dB$. Regarding the estimation of the impulse response we have to increase the value of $L$ at least to 255, to have quite good results as can be seen in Fig. ~\ref{plot:h}.
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{matlab/h_r8}
+  \caption{PSDs comparison (Impulse response: theoretical and estimated)}
+    \label{plot:h}
+\end{figure}
+So finally we decided to stop here in order to find a trade-off between the computation cost and good results. Furthermore we observe that, as espected, the variance on the estimation of $h$ and $\hat{\sigma_\omega^2}$ decreases while $L$ becomes larger and also for this reason we decided for $L=255$ samples.
+
+$\Lambda_n = \frac{\sigma_\omega^2}{M_x || h-\hat{h} ||^2}11111$
+$\Lambda_n^{corr} = \frac{L}{N_{fil} + 1/L \bigl[ \Lambda + (N_{fil}-2)\bigl(\frac{|H(0)|^2}{\sigma_\omega^2} \bigr)\bigr]}$
+$\Lambda_n^{ls} = \frac{(L+1)(L+1-N_{fil})}{N_{fil}(L+2-N_{fil})}$
+$\Lambda = \frac{M_x||\vec{h}||^2}{\sigma_\omega^2}111$
+
+
 \section*{Problem 2}
 To prove equation (3.271) of the textbook we start from the definition
 of $J(k) = \E{\abs{e(k)}^2}$ and substitute
