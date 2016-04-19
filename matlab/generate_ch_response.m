@@ -24,10 +24,10 @@ elseif fd > 0
     % Set the power with the PDP
     g = zeros(N_ch, K);
     for i=1:K
-        g(:,i) = sqrt(pdp) .* g_dopp_int(:, i);
+        g(2:N_ch,i) = sqrt(pdp(2:N_ch)) .* g_dopp_int(2:N_ch, i);
     end
     
     % Add the constant gain
-    g(1,:) = g(1,:) + C;
+    g(1,:) = g_dopp_int(1, :) .* sqrt(pdp(1) - C^2) + C;
 end
 end
