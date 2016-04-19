@@ -21,7 +21,7 @@ rng(rngstate_old);
 y_unnorm = filter(b, a, w, [], 2);
 
 H = freqz(b, a, 'whole', M);
-Eh = norm(H)^2;
+Eh =  1/M * norm(H)^2;
 
 y = y_unnorm ./ sqrt(Eh);
 end
