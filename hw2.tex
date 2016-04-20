@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[a4paper,oneside]{article}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
@@ -11,9 +11,12 @@
 \usepackage{textcomp}
 \usepackage{graphicx}
 \usepackage{xr}
+\usepackage{subcaption}
+%\usepackage{changepage}
 \usepackage[section]{placeins}
 %\usepackage{hyperref}
 
+%\strictpagecheck
 \externaldocument{hw2_code}
 
 \definecolor{matlabgreen}{RGB}{28,172,0}
@@ -27,6 +30,8 @@
 \newcommand{\E}[1]{\operatorname{E}\left[#1\right]}
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 \newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\F}[1]{\operatorname{\mathcal{F}}\left[#1\right]}
+\newcommand{\ceil}[1]{\left\lceil#1\right\rceil}
 
 \author{Enrico Polo \and Riccardo Zanol}
 \title{Homework 2}
@@ -160,7 +165,8 @@ inside the expectation. So the mean squared error becomes
   + \E{2\Re{\left(\vec{h}^T - \vec{c}^T(k) \right) \vec{x}(k) w^*(k)}}
   \label{eq:J}
 \end{equation}
-{\color{red} where the last term is zero because ...}.
+where the last term is zero because the random processes inside it are
+assumed to be independent and the mean of $w(k)$ is zero.
 
 The second term of equation (\ref{eq:J}) is just $\sigma^2_w$, while
 the first expectation can be written as
@@ -169,9 +175,9 @@ the first expectation can be written as
   \left(\sum_{j=0}^{N_{max}}\left(h_j - c_j\right)x(k-j)\right)^* } \]
 where $N_{max} = \max\{N, N_h\}$ and we assume that all the vectors
 are padded with zeros to length $N_{max}$.  If we rearrange the sums
-and the expectation then, {\color{red} if we assume that the pairs
-  $(c_i,c_j)$ and $(x(k-i),x(k-j))$ are statistically independent
-  $\forall i,j$}, we can factor the expectation:
+and the expectation then, if we assume that the pairs $(c_i,c_j)$ and
+$(x(k-i),x(k-j))$ are statistically independent $\forall i,j$, we can
+factor the expectation:
 \begin{equation}
 %%   &\sum_{i=0}^{N_{max}}\sum_{j=0}^{N_{max}}
 %% \E{(h_i -c_i)(h_j-c_j)^*x(k-i)x^*(k-j)} \\
@@ -228,14 +234,15 @@ Depending on the order of the channel and the filter there are two cases:
     \end{equation}
 \end{enumerate}
 
-To prove equation (3.272) we start from equation (3.70) and assume
-that:
+To prove equation (3.272) of the textbook we start from the equation
+that gives the change in $\vec{\Delta c}(k)$ at each iteration and
+assume that:
 \begin{itemize}
 \item $\vec{\Delta c}(k)$ and $\vec{x}(k)$ are independent, 
 \item $e_{min}(k)$ and $\vec{x}(k)$ are orthogonal, 
 \item $\vec{x}^T(k)\vec{x}^*(k) \approx Nr_x(0)$.
 \end{itemize}
-In the LMS algorithm the error on the coefficient vector changes at each iteration in this way (3.70):
+In the LMS algorithm the error on the coefficient vector changes at each iteration in this way (equation (3.70) of the textbook):
 \begin{equation*}
   \vec{\Delta c}(k+1) = \left( I - \mu\vec{x}^*(k)\vec{x}^T(k) \right) \vec{\Delta c}(k) + \mu e_{min}(k)\vec{x}^*(k) , 
 \end{equation*}
@@ -256,23 +263,33 @@ If we write the norm term by term the first expectation
 (\ref{eq:exp_1}) becomes
 \[ \E{\sum_{i=0}^{N-1}\abs{1 - \mu\abs{x(k-i)}^2}^2\abs{\Delta c_i(k)}^2} \]
 then we compute the product between the two squared absolute values,
-we bring the expectaion inside the finite sum and we exploit the
-independece between $x(k-i)$ and $\Delta c_i(k)$ to factor the
+we bring the expectation inside the finite sum and we exploit the
+independence between $x(k-i)$ and $\Delta c_i(k)$ to factor the
 expectations so the first term becomes:
 \[ \E{\norm{\vec{\Delta c}(k)}^2} +
 \mu^2\sum_{i=0}^{N-1}\E{\abs{x(k-i)}^4}\E{\abs{\Delta c_i(k)}^2} - 2\mu
 r_x(0)\E{\norm{\vec{\Delta c}(k)}^2}
 \]
 where we also exploited the WSS of $x(k)$ to write $\E{\abs{x(k-i)}^2}
-= r_x(0)$. {\color{red} e adesso? supponiamo l'input bianco? supponiamo qualche forma per il 4o momento?}
+= r_x(0)$. Now the fourth moment of $x(k)$ would be $3\sigma^4_x$, but
+we approximate it with $r_x(0)^2$ like in equation (3.78) of the
+textbook because we would otherwise get slightly different results.
+So in the end we have the following expression:
+\begin{equation}
+\E{\norm{\vec{\Delta c}(k)}^2} +
+\mu^2r_x(0)^2\E{\norm{\vec{\Delta c}(k)}^2} - 2\mu
+r_x(0)\E{\norm{\vec{\Delta c}(k)}^2} .
+\label{eq:c_final_1}
+\end{equation}
 
 If we use the approximation $\norm{\vec{x}(k)}^2 \approx Nr_x(0)$ in
 the second expectation (\ref{eq:exp_2}), it becomes
-\[
+\begin{equation}
 \mu^2 \E{\abs{e_{min}(k)}^2 \norm{\vec{x}^*(k)}^2}
 = \mu^2Nr_x(0)\E{\abs{e_{min}(k)}^2}
 = \mu^2Nr_x(0)J_{min} .
-\]
+\label{eq:c_final_2}
+\end{equation}
 
 The last two expectations (\ref{eq:exp_3}) and (\ref{eq:exp_4}) can be
 rewritten as, respectively,
@@ -280,6 +297,208 @@ rewritten as, respectively,
   & \E{\left(\mu - \mu^2\norm{\vec{x}(k)}^2\right) e_{min}^*(k) \vec{\Delta c}^T(k)\vec{x}(k)} \\
   & \E{\left(\mu - \mu^2\norm{\vec{x}(k)}^2\right) e_{min}(k) \vec{\Delta c}^T(k)\vec{x}(k)}
 \end{align*}
-{\color{red} anche qua non saprei più come fare}
+and they are both zero because of the independence between $\vec{x}(k)$
+and $\vec{\Delta c}(k)$ and of the orthogonality of $\vec{x}(k)$ and
+$e_{min}(k)$.
+
+Putting together equations (\ref{eq:c_final_1}) and
+(\ref{eq:c_final_2}) we get the difference equation
+\begin{equation}
+  \E{\norm{\vec{\Delta c}(k+1)}^2} = \gamma \E{\norm{\vec{\Delta
+        c}(k)}^2} + \mu^2Nr_x(0)J_{min}
+\end{equation}
+where we define $\gamma$ from equation (\ref{eq:c_final_1}) to be 
+the sum of the constant coefficients of $\E{\norm{\vec{\Delta c}(k)}^2}$:
+\[ \gamma = 1 + \mu^2r_x(0)^2 - 2\mu r_x(0) . \]
+The solution to this difference equation for $k \geq 0$ is
+\begin{equation}
+  \E{\norm{\vec{\Delta c}(k)}^2} =
+  \gamma^k \E{\norm{\vec{\Delta c}(0)}^2} +
+  \mu^2Nr_x(0)J_{min} \frac{1 - \gamma^k}{1 - \gamma}
+\end{equation}
+which is what we wanted to prove.
 \section*{Problem 3}
+To have the desired exponential shape the power delay profile of the
+channel is expressed by
+\begin{equation}
+  M(\tau) = \frac{1}{\overline{\tau}_{rms}} e^{-\tau / \overline{\tau}_{rms}}
+\end{equation}
+where the average rms delay spread is $\overline{\tau}_{rms} =
+0.2T$. We sample the PDP with period $T_c = T/4$ and divide it by
+$\sum_{i=0}^{N_h-1}M(iT_c)$ in order to have
+\[ \sum_{i=0}^{N_h-1}\E{\abs{h_i}^2} = 1 . \]
+The normalized PDP is shown in Fig.~\ref{plot:pdp} and the values it
+takes are reported in Tab.~\ref{tab:pdp}.
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.5\textwidth]{matlab/plot_pdp}
+  \caption{Normalized PDP}
+  \label{plot:pdp}
+\end{figure}
+\begin{table}[h]
+  \centering
+  \begin{tabular}{>{$}c<{$}>{$}c<{$}}
+    M(0T_c) & \SI{-1.458}{\dB} \\
+    M(1T_c) & \SI{-6.886}{\dB} \\
+    M(2T_c) & \SI{-12.315}{\dB} \\
+    M(3T_c) & \SI{-17.744}{\dB} \\
+    M(4T_c) & \SI{-23.172}{\dB} \\
+  \end{tabular}
+  \caption{Values of the normalized PDP}
+  \label{tab:pdp}
+\end{table}
+From the Rice factor we can get the LOS component of $h_0$ as 
+\[ C = \sqrt{K/(K+1)} \approx 0.78 \]
+because we normalized the PDP.
+%, so the statistical power of $h_0$ is
+%\[ \E{\abs{h_0}^2} = \E{\abs{\tilde{h}_0}^2} + C^2 \] = 
+
+The classical Doppler spectrum is given by the expression
+\begin{equation}
+  D(\lambda) = \begin{cases}
+    \frac{1}{\pi f_d} \frac{1}{\sqrt{1 - (\lambda/f_d)^2}} \qquad & \text{if} \quad \abs{\lambda} \leq f_d \\
+    0 & \text{otherwise}
+  \end{cases}
+  \label{eq:D}
+\end{equation}
+where, in our case, $f_d = \frac{25\cdot10^{-5}}{T_c}$.
+
+From equation (4.236) of the textbook
+\[ r_g(\Delta t;\tau) = \mathrm{d}(\Delta t)M(\tau) \]
+we can see that if we generate a random process with PSD $D(\lambda) =
+\F{\mathrm{d}(\Delta t)}$ and multiply it by $M(\tau)$, we have a
+random process with the same power spectral density of the channel
+impulse response $g(t;\tau)$. So we simulate the taps of the channel
+model of section 4.4.6 of the textbook using the schema which that
+section suggests:
+\begin{itemize}
+  \item We generate $N_h$ complex Gaussian signals
+    $\overline{w}_i(lT_p)$ with zero mean, power
+    $\sigma^2_{\overline{w}_i} = 1$, time quantum $T_p = MT_c$ (see
+    (\ref{eq:M})) and length $K_p$ (see (\ref{eq:Kp})).
+  \item Each $\overline{w}_i(lT_p)$ is filtered by a filter whose
+    frequency response $ H_{ds}(\lambda) \approx \sqrt{D(\lambda)} $
+    sets the PSD of the output signal $g'_i(lT_p)$ to
+    \[ \mathcal{P}_{g'_i}(\lambda) = \sigma^2_{\overline{w}_i} \abs{H_{ds}(\lambda)}^2 \approx D(\lambda) . \]
+    The coefficients of the IIR filter $h_{ds}$ are given in Table 4.6
+    of the textbook for the case $f_dT_p = 0.1$ so we must choose the
+    interpolation factor
+    \begin{equation}
+      \frac{T_p}{T_c} = M = \frac{0.1}{f_dT_c}
+      \label{eq:M}
+    \end{equation}
+    in order to have the Doppler spread we want. The output of the
+    filter $g'_i(lT_p)$ must be normalized to have statistical power 1,
+    because we will set it later using the PDP, so we scale it by $
+    \frac{1}{\sqrt{E_{H_{ds}}}} =
+    \frac{1}{\sqrt{\frac{1}{K_H}\sum_{n=0}^{K_H}
+        \abs{H_{ds}(n/T_c)}^2}} $. We must also discard the first
+    samples because they depend on the initial conditions of the
+    filter, since the filter is IIR it does not have a finite length
+    but we can say that after $L_{ds} = 250$~samples the impulse
+    response is zero, since its absolute value is lower than
+    $8\cdot10^{-6}$.
+    \item Now we must interpolate the generated signals to get to the
+      desired time quantum $T_c$, we do so by using a built-in Matlab
+      function that increases the sampling frequency by a factor of
+      $M$ and then applies a low-pass, linear-phase, FIR filter of
+      length $L_{int} = 8M+1$ samples. The filter also has a pass-band
+      gain of $M$ so it does not modify the signal's statistical
+      power. Since we are applying another filter we must remove the
+      transient response of length $L_{int}$ samples from the
+      interpolated signal.
+
+      The total number of samples $K_p$ that must be generated in
+      order to simulate the channel response for times $kT_c :
+      k=0,1,\dots K-1$, taking into account the transients that must
+      be dropped, is
+      \begin{equation}
+        K_p = \ceil{K/M} + L_{ds} + \ceil{L_{int}/M} .
+        \label{eq:Kp}
+      \end{equation}
+      We set the length of the channel response to be simulated to
+      $K=80000$ to use the same data for the plots (where we truncate
+      it to 12000 samples) and the pdf estimation.
+      \item The output of the interpolator $g'_i(kT_c) : i=1,2,\dots
+        N_h-1$ is then scaled according to the values of the PDP to
+        obtain the channel response coefficients (except for the
+        first, $h_0$):
+        \begin{equation}
+          h_i(kT_c) = g'_i(kT_c) \sqrt{M(iTc)} \qquad i=1,2,\dots N_h-1 .
+        \end{equation}
+        The first coefficient must also include the constant LOS gain
+        $C$ but, to avoid modifying the average transmitted power, we
+        must take it into account when we set the power
+        $\E{\abs{h_0}^2}$. So the simulated coefficients of the
+        channel response are:
+        \begin{equation}
+          h_i(kT_c) = \begin{cases}
+            g'_i(kT_c) \sqrt{M(iTc)} \qquad & i=1,2,\dots N_h-1 \\
+            g'_0(kT_c) \sqrt{M(0) - C^2} + C \qquad & i=0
+            \end{cases}
+        \end{equation}
+        which are plotted in Fig.~\ref{plot:h_coeff} for $i=0,2,4$.
+\end{itemize}
+Since the channel is slow fading the shape of the plots is smooth
+because the channel response changes slowly in time, as can be seen in
+the figure.
+%% \checkoddpage
+  %% \ifoddpage
+  %%   \newcommand{\figangle}[0]{angle\=90}
+  %%   \else
+  %%   \newcommand{\figangle}[0]{angle\=270}
+  %%   \fi
+\begin{figure}[p]
+  \centering
+  \includegraphics[angle=90,height=\textheight]{matlab/plot_h_coeff}
+  \caption{Simulated channel impulse response}
+  \label{plot:h_coeff}
+\end{figure}
+
+We estimate the probability density function of
+$\abs{h_0}/M_{\abs{h_0}}$ by computing an histogram with 2048 bars,
+normalizing it and scaling it by the step size. The theoretical pdf
+would be a Rice distribution with parameter $K$ if the Doppler spread was $f_d =
+0$. We don't know how to compute it in the case $f_d > 0$ so we
+compare the Rice pdf with the estimated pdf in Fig.~\ref{plot:pdf},
+where we can see that the two curves look similar and the effect of
+the Doppler spread are the peaks that we see in the estimated pdf.
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{matlab/plot_pdf}
+  \caption{Probability density function of $\abs{h_0}/M_{\abs{h_0}}$}
+  \label{plot:pdf}
+\end{figure}
+
+If we try to estimate the PSD of $h_0$ with the Welch method we see
+that it only detects the spectral line in 0 due to the LOS gain. This
+is because the Doppler spectrum is very narrow for the value of
+$f_dT_c$ of our case and, if we try to increase it, we see that the
+estimated PSD starts to have a flat region and a peak in
+correspondence with those of the theoretical PSD.  The theoretical PSD
+is $D(\lambda)$ from equation (\ref{eq:D}) plus the spectral line due
+to the LOS gain:
+\begin{equation}
+  \mathcal{P}(\lambda) = D(\lambda) + C^2\delta(\lambda)
+\end{equation}
+In Fig.~\ref{plot:psd} the theoretical PSD is compared to the one
+estimated with the Welch method using a rectangular window, chunks of
+length $D=5000$ and overlap $S=1200$. In Fig.~\ref{plot:psd_detail} we
+can see a detail of what happens near $f_d$.
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}{0.7\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{matlab/plot_psd}
+  \caption{All the frequencies}
+  \label{plot:psd}
+  \end{subfigure}
+  \begin{subfigure}{0.7\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{matlab/plot_psd_detail}
+  \caption{Detail near $f_d$}
+  \label{plot:psd_detail}
+  \end{subfigure}
+  \caption{Power spectral density of $h_0$}
+\end{figure}
 \end{document}
