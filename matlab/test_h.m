@@ -1,9 +1,11 @@
 close all; clear all; clc;
 
-[b,a] = classical_doppler_spectrum();
-delta = [1; zeros(1023, 1)];
-
-h = filter(b, a, delta);
+fd = 0.4;
+f = linspace(-2*fd, 2*fd, 4000);
+D = classical_doppler_spectrum(f, fd);
 
 figure;
-plot(0:length(h)-1, h);
+plot(f, D);
+
+
+sum(D)

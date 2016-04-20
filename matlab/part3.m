@@ -26,8 +26,9 @@ for i=0:4
 end
 
 fdTc = 25e-5;
+fd = fdTc / Tc;
 K = 80000;
-h = generate_ch_response(Tc, fdTc/Tc, norm_pdp, C, N_h, K, 'shuffle');
+h = generate_ch_response(Tc, fd, norm_pdp, C, N_h, K, 'shuffle');
 
 % Plot the channel h
 Kplot = 12000;
@@ -44,16 +45,19 @@ ylabel('|h_4(k)|');
 
 % PSD 
 Kf = 80000; % We need the resolution to see D
-fd = fdTc / Tc;
 f = linspace(0, 1/Tc, Kf);
 D = classical_doppler_spectrum(f, fd);
-D = D ./ sum(D); % Must integrate to 1
-theor_spec = D .* norm_pdp(1);
+kfd = ceil(fdTc*Kf);
+D(Kf - kfd +1:Kf) = flip(D(1:kfd));
+%D = D ./ sum(D); % Must integrate to 1
+theor_spec = D .* (norm_pdp(1) - C^2);
 theor_spec(1) = theor_spec(1) + C^2*Kf;
+theor_spec(Kf) = theor_spec(1);
 
 welch_D = 5000;
-welch_S = 125;
-welch = psd_welch_estim(transpose(h(1,:)), rectwin(welch_D), welch_D, welch_S, Kf);
+welch_S = 1200;
+%welch = psd_welch_estim(transpose(h(1,:)), rectwin(welch_D), welch_D, welch_S, Kf);
+welch = pwelch(h(1,:), rectwin(welch_D), welch_S, Kf);
 
 figure;
 hold all;
@@ -79,3 +83,15 @@ ylabel('dB');
 legend('Welch', 'Theoretical');
 xlim([0, 3*fd]);
 ylim([-20, 30]);
+
+% Histogram of h_0
+h_0_abs = abs(h(1,:)) ./ sqrt(norm_pdp(1));
+[pdf, midpoints] = empirical_pdf(h_0_abs, 2048);
+theo_pdf = rice_pdf(midpoints, rice_factor);
+
+figure;
+hold all;
+plot(midpoints, pdf);
+plot(midpoints, theo_pdf);
+%xlim([0 3]);
+ylim([0 2]);

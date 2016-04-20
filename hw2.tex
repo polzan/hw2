@@ -52,12 +52,12 @@ To estimate the filter impulse response $\vec{h}^T = [h(0), ..., h(N-1)]$ by usi
 \begin{align*}
 d(k)& = \vec{h}^T \vec{x} + w(k)&  k& = N-1,N-2...,N-1+L-1
 \end{align*}
-????????At the receiver side we consider $d(k)$ as the desired process we want to trace using our FIR filter, using $\vec{p}$ as input. In this way we can find that setting properly $N_{fil}$ and $L$ $\vec{c}_{opt} = \vec{h}$ in the ideal case (same realisation of the white input at the sender and at the receiver) and approximates it using a PN sequence. ??????????
+At the receiver side we consider $d(k)$ as the desired process we want to trace using our FIR filter, using $\vec{p}$ as input. In this way we can find that setting properly $N_{fil}$ and $L$ that $\vec{c}_{opt} = \vec{h}$ in the ideal case (same realisation of the white input at the sender and at the receiver) and approximates it using a PN sequence. 
 \newline Applying the correlation method we can find an estimate of the filter coefficients by using the relation 
 \begin{align*}
 \hat{r_{dx}}(n) &= \frac{1}{L} \sum_{k=N-1}^{(N-1) + (L-1)} {d(k)p^*(k-n)} & n&=0,1,...N_{fil} -1
 \end{align*}
-in which $d(k)$ is a received sequence of length L and $p(k)$ is the input PN sequence of length L, known by the receiver. ????????If we try an $N_{fil} \geq N$ the index of $p(k-n)$ must be negative in the computation of the sum but we can already compute that by using the property that for periodicity $p(-i) = p(L-i)$?????????????. The error commited in this case is given by ???????$d-\hat{d} or R^{-1}..$??????
+in which $d(k)$ is a received sequence of length L and $p(k)$ is the input PN sequence of length L, known by the receiver. If we try an $N_{fil} > N$ the index of $p(k-n)$ must be negative in the computation of the sum but we can already compute that by using the property that for periodicity $p(-i) = p(L-i)$. 
 
 Using instead the LS method we compute the autocorrelation matrix of the PN sequence $\phi$ whose elements are 
 \begin{align*}
@@ -69,20 +69,84 @@ and the cross correlation vector between $\vec{d}$ and $\vec{p}$, $\vec{\theta}^
 \theta(n)& = \sum_{k=N-1}^{(N-1) + (L-1)}{d(k)p^*(k-n)}& n=0,1...,N_{fil}-1
 \end{align*}
 Then we find te optimal solution for the LS problem that give us  $\vec{\hat{h_{ls}}} = \vec{\phi}^{-1} \vec{\theta}$ with the correspondent error 
-$ e_{min} = e_d - \vec{\theta}^H \vec{\hat{h}}_{ls}$ ($e_d$ energy of the desired signal $d(k)$). Using this, we can finally estimate the power of the noise that affects $d(k)$ by $\hat{\sigma_\omega^2} = \frac{e_{min}}{L}$.
+$ e_{min} = e_d - \vec{\theta}^H \vec{\hat{h}}_{ls}$ ($e_d$ energy of the desired signal $d(k)$). This relation is valid also for the correletion method error by using $\vec{\hat{h}}_{corr}$ instead of $\vec{\hat{h}}_{ls}$ and computing also in that case the vector $\vec{\theta}$.  Using this, we can finally estimate the power of the noise that affects $d(k)$ by $\hat{\sigma_\omega^2} = \frac{e_{min}}{L}$.
 \newline In our tries we tried to find the optimal values $N_{fil}$ and $L$. We started from $L = 15$ increasing it until the error $e$ didn't increase any longer. With both methods we find that from L=63 or L=127, it depends on the specific realization of w(k), and $N_{fil}$ fixed, we get the same results in therms of $\hat{\sigma_\omega^2} = e/L\simeq -5 dB$. Regarding the estimation of the impulse response we have to increase the value of $L$ at least to 255, to have quite good results as can be seen in Fig. ~\ref{plot:h}.
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.7\textwidth]{matlab/h_r8}
-  \caption{PSDs comparison (Impulse response: theoretical and estimated)}
+  \caption{Impulse response: theoretical and estimated}
     \label{plot:h}
 \end{figure}
-So finally we decided to stop here in order to find a trade-off between the computation cost and good results. Furthermore we observe that, as espected, the variance on the estimation of $h$ and $\hat{\sigma_\omega^2}$ decreases while $L$ becomes larger and also for this reason we decided for $L=255$ samples.
+So finally we decided to stop here in order to find a trade-off between the computation time and good accuracy. Furthermore we observe that, as espected, the variance on the estimation of $h$ and $\hat{\sigma_\omega^2}$ decreases while $L$ becomes larger and also for this reason we decided for $L=255$ samples.
+We analysed, as required, also the behaviour of $e/L$ respect to $N_fil$ for both methods (Fig. ~\ref{plot:eL}). We see that the $\hat{\sigma_\omega^2 = \frac{e}{L}}$ is higher than the real value. This is due to the fact that we are using a number $N_fil$ of coefficients that is not enough to correctly estimate the shape of $h$ and we are adding an error to that due only to the presence of $w(k)$. Then we have a good estimation interval in which $N_fil \simeq N$ and if the number of coefficients used for the estimation is too large $N_fil \longrightarrow L$ we are tracing the whole process so the error decreases and one more time we are not estimating correctly $\sigma_\omega^2$.
+\newline This behaviour can be seen also observing the beahviour of $\Lambda_n$. In Fig. ~\ref{plot:snrCORR} is reported the estimate SNR using the correlation method $\Lambda_n = \frac{\sigma_\omega^2}{M_p || h-\hat{h}_{corr} ||^2}$, supposing we know $h$ and $\sigma_\omega^2$ and having that for a PN sequence $M_p = 1$. The red lines represent the ideal behaviour compute as $\Lambda_n^{corr} = \frac{L}{N_{fil} + 1/L \bigl[ \Lambda + (N_{fil}-2)\bigl(\frac{|H(0)|^2}{\sigma_\omega^2} \bigr)\bigr]}$ in which $\Lambda = \frac{M_p||\vec{h}||^2}{\sigma_\omega^2}$  and and $|H(0)|^2 = \sum_{i=0}^{N-1} h_i$. 
+  The same was done for the LS method ~\ref{plot:snrLS}) in which we have used $\Lambda_n = \frac{\sigma_\omega^2}{M_p || h-\hat{h}_ls ||^2}$ and $\Lambda_n^{ls} = \frac{(L+1)(L+1-N_{fil})}{N_{fil}(L+2-N_{fil})}$.
+  In fact in both figures we see that for $N_fil$ too low the $\hat{\Lambda_n}$ is significantly smaller than the theoretical one (that assume we have enough coefficients to correctly model $h$). Then it increases and has a peak in $N_{fil} \simeq N$ before starting decreasing following the ideal shape.  So in conclusion if we want to find an optimal $N_{fil}$ we must select a value near $N$. By analizing the SNR plots the peak is on $N_{fil} = 12$ so we can select this value. This is true in our case because the $h$ we are estimating from n = 13 to n = 15 is very close to zero so in fact we commit an higher error by trying to estimate the last 3 coefficients than to set them to zero (as can be seen in Fig. 1). We could also increase $L$ to a very high value to better estimate the shape of $h$ also in the tail (and we see that the peak moves to $N_{fil} = N$) but the computation time will become too high. But if we are trying to estimate an unknown system with a different behaviour we should select $N_{fil} = N$ in order to have a coefficient for each $h_i$. 
+  The estimeted parameters are: $\hat{\sigma_\omega^2} = 0.2658$ with LS and $\hat{\sigma_\omega^2} = 0.27$ with the correlation method. We report also the $\hat{h}_i$ in the following tab for $L = 255$ and $N_{fil} = 15$.
+  
+\begin{table}
+\centering
+  	 												 
+\begin{tabular}{|c|c|c|}
+\hline
+i & $ \hat{h}_i^{corr} $            & $\hat{h}_i^{ls} $          \\
+\hline
+0 &	0,9304	& 0.9373\\
+\hline
+1 &	0,6516	& 0.6596\\
+\hline
+2 &	0,4757	& 0.4844\\
+\hline
+3 &	0,2877	& 0.2972\\
+\hline
+4 &	0,1031	& 0.1133\\
+\hline
+5 &	0,0500	& 0.0604\\
+\hline
+6 &	0,0859	& 0.0961\\
+\hline
+7 &	0,0505	& 0.0608\\
+\hline
+8 &	-0,0178	& -0.0073\\
+\hline
+9 &	0,0496	& 0.0600\\
+\hline
+10 &	 -0,0579	& -0.0472\\
+\hline
+11 &	 0,0287	& 0.0391\\
+\hline
+12 &	 -0,0266 	& -0.0161\\
+\hline
+13 &	 -0,0278 	&-0.0172\\
+\hline
+14 &	 -0,0407 	& -0.0300\\
+\hline
+\end{tabular}
+\end{table}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{matlab/eL}
+  \caption{$\frac{e}{L}$ (dB) as function of $N_{fil}$}
+    \label{plot:eL}
+\end{figure}
 
-$\Lambda_n = \frac{\sigma_\omega^2}{M_x || h-\hat{h} ||^2}11111$
-$\Lambda_n^{corr} = \frac{L}{N_{fil} + 1/L \bigl[ \Lambda + (N_{fil}-2)\bigl(\frac{|H(0)|^2}{\sigma_\omega^2} \bigr)\bigr]}$
-$\Lambda_n^{ls} = \frac{(L+1)(L+1-N_{fil})}{N_{fil}(L+2-N_{fil})}$
-$\Lambda = \frac{M_x||\vec{h}||^2}{\sigma_\omega^2}111$
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{matlab/eCORR}
+  \caption{$\Lambda_n^{corr}$ (dB) as function of $N_{fil}$}
+    \label{plot:snrCORR}
+\end{figure}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{matlab/eLS}
+  \caption{$\Lambda_n^{ls}$ (dB) as function of $N_{fil}$}
+  
+    \label{plot:snrLS}
+\end{figure}
+%$\Lambda_n = \frac{\sigma_\omega^2}{M_x || h-\hat{h} ||^2}11111$
+%$\Lambda_n^{corr} = \frac{L}{N_{fil} + 1/L \bigl[ \Lambda + (N_{fil}-2)\bigl(\frac{|H(0)|%^2}{\sigma_\omega^2} \bigr)\bigr]}$
+%$\Lambda_n^{ls} = \frac{(L+1)(L+1-N_{fil})}{N_{fil}(L+2-N_{fil})}$
+%$\Lambda = \frac{M_x||\vec{h}||^2}{\sigma_\omega^2}111$
 
 
 \section*{Problem 2}

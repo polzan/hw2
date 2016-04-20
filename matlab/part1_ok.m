@@ -2,8 +2,8 @@
 %params
 
 N = 15;
-%N_fil = 15;   %comment to use snr_n.m
-%r = 9;      %comment to use snr_n.m
+N_fil = 15;   %comment to use snr_n.m
+r = 8;      %comment to use snr_n.m
 a = 0.68129;
 sigma2w = 0.3;
 n = 0:N-1;
