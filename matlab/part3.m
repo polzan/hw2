@@ -54,6 +54,12 @@ xlabel('k');
 ylim([0 1.5]);
 xlim([0 Kplot-1]);
 %set(gcf, 'PaperPosition', [0 0 1600 900])
+set(gcf, 'Units','centimeters', 'Position',[0 0 25 10])
+
+%# set size on printed paper
+set(gcf, 'PaperUnits','centimeters', 'PaperPosition',[0 0 25 10])
+%# WYSIWYG mode: you need to adjust your screen's DPI (*)
+set(gcf, 'PaperPositionMode','auto')
 print('plot_h_coeff', '-depsc');
 
 fprintf('The coherence time is %.3fT\n', 1/(10*fdTc))

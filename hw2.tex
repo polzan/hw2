@@ -1,4 +1,4 @@
-\documentclass[a4paper,twoside]{article}
+\documentclass[a4paper,oneside]{article}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
@@ -12,11 +12,11 @@
 \usepackage{graphicx}
 \usepackage{xr}
 \usepackage{subcaption}
-\usepackage{changepage}
+%\usepackage{changepage}
 \usepackage[section]{placeins}
 %\usepackage{hyperref}
 
-\strictpagecheck
+%\strictpagecheck
 \externaldocument{hw2_code}
 
 \definecolor{matlabgreen}{RGB}{28,172,0}
@@ -206,8 +206,8 @@ Putting together equations (\ref{eq:c_final_1}) and
   \E{\norm{\vec{\Delta c}(k+1)}^2} = \gamma \E{\norm{\vec{\Delta
         c}(k)}^2} + \mu^2Nr_x(0)J_{min}
 \end{equation}
-where we define $\gamma$ from equation (\ref{eq:c_final_1}) by
-collecting the constant coefficients of $\E{\norm{\vec{\Delta c}(k)}^2}$:
+where we define $\gamma$ from equation (\ref{eq:c_final_1}) to be 
+the sum of the constant coefficients of $\E{\norm{\vec{\Delta c}(k)}^2}$:
 \[ \gamma = 1 + \mu^2r_x(0)^2 - 2\mu r_x(0) . \]
 The solution to this difference equation for $k \geq 0$ is
 \begin{equation}
@@ -248,7 +248,7 @@ takes are reported in Tab.~\ref{tab:pdp}.
 \end{table}
 From the Rice factor we can get the LOS component of $h_0$ as 
 \[ C = \sqrt{K/(K+1)} \approx 0.78 \]
-because the PDP is normalized.
+because we normalized the PDP.
 %, so the statistical power of $h_0$ is
 %\[ \E{\abs{h_0}^2} = \E{\abs{\tilde{h}_0}^2} + C^2 \] = 
 
@@ -268,7 +268,7 @@ we can see that if we generate a random process with PSD $D(\lambda) =
 \F{\mathrm{d}(\Delta t)}$ and multiply it by $M(\tau)$, we have a
 random process with the same power spectral density of the channel
 impulse response $g(t;\tau)$. So we simulate the taps of the channel
-model of section 4.4.6 of the textbook using the schema that this
+model of section 4.4.6 of the textbook using the schema which that
 section suggests:
 \begin{itemize}
   \item We generate $N_h$ complex Gaussian signals
@@ -315,6 +315,9 @@ section suggests:
         K_p = \ceil{K/M} + L_{ds} + \ceil{L_{int}/M} .
         \label{eq:Kp}
       \end{equation}
+      We set the length of the channel response to be simulated to
+      $K=80000$ to use the same data for the plots (where we truncate
+      it to 12000 samples) and the pdf estimation.
       \item The output of the interpolator $g'_i(kT_c) : i=1,2,\dots
         N_h-1$ is then scaled acccording to the values of the PDP to
         obtain the channel response coefficients (except for the
@@ -335,7 +338,9 @@ section suggests:
         \end{equation}
         which are plotted in Fig.~\ref{plot:h_coeff} for $i=0,2,4$.
 \end{itemize}
-%From the plots of the $h_i$ we can see that
+Since the channel is slow fading the shape of the plots is smooth
+because the channel response changes slowly in time, as can be seen in
+the figure.
 %% \checkoddpage
   %% \ifoddpage
   %%   \newcommand{\figangle}[0]{angle\=90}
@@ -344,7 +349,7 @@ section suggests:
   %%   \fi
 \begin{figure}[p]
   \centering
-  \includegraphics[angle=90,width=\textwidth]{matlab/plot_h_coeff}
+  \includegraphics[angle=90,height=\textheight]{matlab/plot_h_coeff}
   \caption{Simulated channel impulse response}
   \label{plot:h_coeff}
 \end{figure}
@@ -352,9 +357,9 @@ section suggests:
 We estimate the probability density function of
 $\abs{h_0}/M_{\abs{h_0}}$ by computing an histogram with 2048 bars,
 normalizing it and scaling it by the step size. The theoretical pdf
-would be a Rician with parameter $K$ if the Doppler spread was $f_d =
+would be a Rice distribution with parameter $K$ if the Doppler spread was $f_d =
 0$. We don't know how to compute it in the case $f_d > 0$ so we
-compare the Rician with the estimated pdf in Fig.~\ref{plot:pdf},
+compare the Rice pdf with the estimated pdf in Fig.~\ref{plot:pdf},
 where we can see that the two curves look similar and the effect of
 the Doppler spread are the peaks that we see in the estimted pdf.
 \begin{figure}[htbp]
