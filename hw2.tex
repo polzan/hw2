@@ -217,7 +217,7 @@ The solution to this difference equation for $k \geq 0$ is
 \end{equation}
 which is what we wanted to prove.
 \section*{Problem 3}
-To have the desired exponntial shape the power delay profile of the
+To have the desired exponential shape the power delay profile of the
 channel is expressed by
 \begin{equation}
   M(\tau) = \frac{1}{\overline{\tau}_{rms}} e^{-\tau / \overline{\tau}_{rms}}
@@ -287,7 +287,7 @@ section suggests:
       \label{eq:M}
     \end{equation}
     in order to have the Doppler spread we want. The output of the
-    filter $g'_i(lT_p)$ must be normlized to have statistical power 1,
+    filter $g'_i(lT_p)$ must be normalized to have statistical power 1,
     because we will set it later using the PDP, so we scale it by $
     \frac{1}{\sqrt{E_{H_{ds}}}} =
     \frac{1}{\sqrt{\frac{1}{K_H}\sum_{n=0}^{K_H}
@@ -300,8 +300,8 @@ section suggests:
     \item Now we must interpolate the generated signals to get to the
       desired time quantum $T_c$, we do so by using a built-in Matlab
       function that increases the sampling frequency by a factor of
-      $M$ and then applies a lowpass, linear-phase, FIR filter of
-      length $L_{int} = 8M+1$ samples. The filter also has a passband
+      $M$ and then applies a low-pass, linear-phase, FIR filter of
+      length $L_{int} = 8M+1$ samples. The filter also has a pass-band
       gain of $M$ so it does not modify the signal's statistical
       power. Since we are applying another filter we must remove the
       transient response of length $L_{int}$ samples from the
@@ -319,7 +319,7 @@ section suggests:
       $K=80000$ to use the same data for the plots (where we truncate
       it to 12000 samples) and the pdf estimation.
       \item The output of the interpolator $g'_i(kT_c) : i=1,2,\dots
-        N_h-1$ is then scaled acccording to the values of the PDP to
+        N_h-1$ is then scaled according to the values of the PDP to
         obtain the channel response coefficients (except for the
         first, $h_0$):
         \begin{equation}
@@ -361,7 +361,7 @@ would be a Rice distribution with parameter $K$ if the Doppler spread was $f_d =
 0$. We don't know how to compute it in the case $f_d > 0$ so we
 compare the Rice pdf with the estimated pdf in Fig.~\ref{plot:pdf},
 where we can see that the two curves look similar and the effect of
-the Doppler spread are the peaks that we see in the estimted pdf.
+the Doppler spread are the peaks that we see in the estimated pdf.
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.7\textwidth]{matlab/plot_pdf}
@@ -374,7 +374,7 @@ that it only detects the spectral line in 0 due to the LOS gain. This
 is because the Doppler spectrum is very narrow for the value of
 $f_dT_c$ of our case and, if we try to increase it, we see that the
 estimated PSD starts to have a flat region and a peak in
-correspondance with those of the theoretical PSD.  The theoretical PSD
+correspondence with those of the theoretical PSD.  The theoretical PSD
 is $D(\lambda)$ from equation (\ref{eq:D}) plus the spectral line due
 to the LOS gain:
 \begin{equation}
