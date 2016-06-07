@@ -8,10 +8,13 @@ Tc = T/4;
 Kpdp = N_h;
 tau = transpose((0:Kpdp-1) .* Tc);
 pdp = exp(-tau/tau_rms)./tau_rms;
-norm_pdp = pdp ./ sum(pdp);
+% norm_pdp = pdp ./ sum(pdp);
+
 
 rice_factor = 10^(2 / 10); % 2dB
 C = sqrt(rice_factor/(rice_factor+1)); % Assuming normalized pdp
+Md = C^2/rice_factor;
+norm_pdp = pdp ./Md;
 
 % Plot of the PDP(0..4)
 figure;
